@@ -1,0 +1,1326 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package Telas;
+
+import Telas.Funcionario.*;
+import Telas.Cliente.*;
+import Telas.Estoque.*;
+import Telas.Fornecedor.*;
+import Telas.Menu.*;
+import Telas.Mesas.*;
+import java.beans.PropertyVetoException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import javax.swing.Timer;
+import java.sql.*;
+import Connection.ConnectionClass;
+import java.time.LocalDateTime;
+
+/**
+ *
+ * @author diogo e eric
+ */
+public class Tela_Principal extends javax.swing.JFrame {
+
+    Connection conexao = null;
+    PreparedStatement pst = null;
+    ResultSet rs = null;
+    LocalDateTime dataAgora = null;
+    // VARIAVEIS PARA DATA
+    String dia = "";
+    String mes = "";
+    String ano = "";
+    String cod_mes_nome = null;
+
+    //VARIAVEIS PARA O HORARIO
+    String hora = "";
+    String minuto = "";
+    String segundo = "";
+
+    public Tela_Principal() {
+
+        initComponents();
+        setExtendedState(MAXIMIZED_BOTH);
+
+        conexao = ConnectionClass.conector();
+        System.out.println(conexao);
+        verificaBd();
+        DataHoraPc();
+        
+    }
+
+    public void DataHoraPc() {
+
+        Date dataSistema = new Date();
+        SimpleDateFormat formato_dia = new SimpleDateFormat("dd");
+        SimpleDateFormat formato_mes = new SimpleDateFormat("MM");
+        SimpleDateFormat formato_ano = new SimpleDateFormat("yyyy");
+        lblDia.setText(formato_dia.format(dataSistema));
+        lblMes.setText(formato_mes.format(dataSistema));
+        lblAno.setText(formato_ano.format(dataSistema));
+        Timer timer = new Timer(0, new hora_sistema());
+        timer.start();
+
+    }
+
+    private void verificaBd() {
+        if (conexao != null) {
+
+            lblIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/IconBase.png")));
+            lblStatus.setText("Conectado");
+
+        } else {
+
+            lblIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/IconBase2.png")));
+            lblStatus.setText("Não conectado");
+
+        }
+    }
+
+// FUNCAO QUE PEGA A DATA E HORA  
+    private void Data_Hora_Agora() {
+        dia = lblDia.getText();
+        mes = lblMes.getText();
+        ano = lblAno.getText();
+        hora = lblHora.getText();
+        minuto = lblMinuto.getText();
+        segundo = lblSegundo.getText();
+    }
+
+    private void CadastroDeAcesso() {
+        // registra a entrada e a saida do sistema 
+        Data_Hora_Agora();
+
+        String idFunc = getFuncionario(lblLogin.getText());
+
+        String sql = "insert into tb_Acessos("
+                + " tb_funcionario_idFunc, EntradaOuSaida,"
+                + " Data_Hora)"
+                + " values(?, ?, ?)";
+
+        try {
+
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, idFunc);
+            pst.setString(2, "Saida");
+            pst.setString(3, ano + "-"
+                    + mes + "-"
+                    + dia + " "
+                    + hora + ":"
+                    + minuto + ":"
+                    + segundo);
+
+            if ((idFunc.isEmpty())) {
+
+                JOptionPane.showMessageDialog(null, "Sua Data ou Login não consta no sistema!"
+                        + " Para mais informações, entre em contato com um Administrador.");
+
+            } else {
+
+                int adicionado = pst.executeUpdate();
+                System.out.println("Adicionado : " + adicionado);
+
+                if (adicionado > 0) {
+                    JOptionPane.showMessageDialog(null, "Data de saida registrado!!");
+
+                }
+
+            }
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(null, e);
+        }
+
+    }
+
+    private String getFuncionario(String login) {
+
+        String idFunc = "";
+        System.out.println("aqui 2.1");
+
+        String sql = "select idFunc as 'ID'"
+                + " from tb_funcionario where login like ?";
+        System.out.println("aqui 2.2");
+        try {
+
+            pst = conexao.prepareStatement(sql);
+            System.out.println("aqui 2.3");
+            pst.setString(1, login);
+            System.out.println("aqui 2.4");
+            rs = pst.executeQuery();
+            System.out.println("aqui 2.5");
+
+            while (rs.next()) {
+                idFunc = rs.getString("ID");
+                System.out.println("aqui 2.6");
+
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "aqui 2: " + e);
+        }
+        return idFunc;
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        pnPrincipal = new javax.swing.JPanel();
+        dpTelas = new javax.swing.JDesktopPane();
+        pnLateral = new javax.swing.JPanel();
+        lblLogado = new javax.swing.JLabel();
+        lblLogin = new javax.swing.JLabel();
+        lblSeparador1 = new javax.swing.JLabel();
+        lblSetor = new javax.swing.JLabel();
+        lblSeparador2 = new javax.swing.JLabel();
+        lblCargo = new javax.swing.JLabel();
+        lblSeparador = new javax.swing.JLabel();
+        lblData = new javax.swing.JLabel();
+        lblDia = new javax.swing.JLabel();
+        lblBarra1 = new javax.swing.JLabel();
+        lblMes = new javax.swing.JLabel();
+        lblBarra2 = new javax.swing.JLabel();
+        lblAno = new javax.swing.JLabel();
+        lblSeparador3 = new javax.swing.JLabel();
+        lblHorario = new javax.swing.JLabel();
+        lblHora = new javax.swing.JLabel();
+        lblDp1 = new javax.swing.JLabel();
+        lblMinuto = new javax.swing.JLabel();
+        lblDp2 = new javax.swing.JLabel();
+        lblSegundo = new javax.swing.JLabel();
+        lblSeparador4 = new javax.swing.JLabel();
+        lblIcon = new javax.swing.JLabel();
+        lblStatus = new javax.swing.JLabel();
+        jmbMenu = new javax.swing.JMenuBar();
+        jmFunc = new javax.swing.JMenu();
+        jmFuncVil = new javax.swing.JMenuItem();
+        jmFuncCad = new javax.swing.JMenuItem();
+        jmFuncAlt = new javax.swing.JMenuItem();
+        jmEst = new javax.swing.JMenu();
+        jmEstVil = new javax.swing.JMenuItem();
+        jmEstCad = new javax.swing.JMenuItem();
+        jmEstAlt = new javax.swing.JMenuItem();
+        jmEstGasto = new javax.swing.JMenu();
+        jmEstContEnt = new javax.swing.JMenuItem();
+        jmEstContSai = new javax.swing.JMenuItem();
+        jmForn = new javax.swing.JMenu();
+        jmFornCli = new javax.swing.JMenuItem();
+        jmFornCad = new javax.swing.JMenuItem();
+        jmFornAlt = new javax.swing.JMenuItem();
+        jmCli = new javax.swing.JMenu();
+        jmCliVil = new javax.swing.JMenuItem();
+        jmCliCad = new javax.swing.JMenuItem();
+        jmCliAlt = new javax.swing.JMenuItem();
+        jmMenu = new javax.swing.JMenu();
+        jmMenuVil = new javax.swing.JMenuItem();
+        jmMenuCad = new javax.swing.JMenuItem();
+        jmMenuAlt = new javax.swing.JMenuItem();
+        jmMesas = new javax.swing.JMenu();
+        jmMesasVil = new javax.swing.JMenuItem();
+        jmMesasCad = new javax.swing.JMenuItem();
+        jmMesasAlt = new javax.swing.JMenuItem();
+        jmPedidos = new javax.swing.JMenu();
+        jmPedidoCozinha = new javax.swing.JMenuItem();
+        jmPedidoGarcom = new javax.swing.JMenuItem();
+        jmRel = new javax.swing.JMenu();
+        jmRelAtiv = new javax.swing.JMenuItem();
+        jmRelEstControl = new javax.swing.JMenuItem();
+        jmExit = new javax.swing.JMenu();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
+        setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
+        getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        pnPrincipal.setLayout(new java.awt.GridBagLayout());
+
+        javax.swing.GroupLayout dpTelasLayout = new javax.swing.GroupLayout(dpTelas);
+        dpTelas.setLayout(dpTelasLayout);
+        dpTelasLayout.setHorizontalGroup(
+            dpTelasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        dpTelasLayout.setVerticalGroup(
+            dpTelasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(1, 1, 1, 1);
+        pnPrincipal.add(dpTelas, gridBagConstraints);
+
+        pnLateral.setBackground(new java.awt.Color(0, 51, 102));
+        pnLateral.setMaximumSize(new java.awt.Dimension(170, 170));
+        pnLateral.setMinimumSize(new java.awt.Dimension(170, 170));
+        pnLateral.setName(""); // NOI18N
+        pnLateral.setPreferredSize(new java.awt.Dimension(40, 40));
+        pnLateral.setLayout(new java.awt.GridBagLayout());
+
+        lblLogado.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblLogado.setForeground(new java.awt.Color(204, 204, 204));
+        lblLogado.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblLogado.setText("Logado como:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 59;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnLateral.add(lblLogado, gridBagConstraints);
+
+        lblLogin.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblLogin.setForeground(new java.awt.Color(204, 204, 204));
+        lblLogin.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblLogin.setText("Login");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 59;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnLateral.add(lblLogin, gridBagConstraints);
+
+        lblSeparador1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblSeparador1.setForeground(new java.awt.Color(204, 204, 204));
+        lblSeparador1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSeparador1.setText("|");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 10;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnLateral.add(lblSeparador1, gridBagConstraints);
+
+        lblSetor.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblSetor.setForeground(new java.awt.Color(204, 204, 204));
+        lblSetor.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSetor.setText("Setor");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 60;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnLateral.add(lblSetor, gridBagConstraints);
+
+        lblSeparador2.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblSeparador2.setForeground(new java.awt.Color(204, 204, 204));
+        lblSeparador2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSeparador2.setText("|");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 10;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnLateral.add(lblSeparador2, gridBagConstraints);
+
+        lblCargo.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblCargo.setForeground(new java.awt.Color(204, 204, 204));
+        lblCargo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCargo.setText("Cargo");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 54;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnLateral.add(lblCargo, gridBagConstraints);
+
+        lblSeparador.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblSeparador.setForeground(new java.awt.Color(204, 204, 204));
+        lblSeparador.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSeparador.setText("|");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 10;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnLateral.add(lblSeparador, gridBagConstraints);
+
+        lblData.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblData.setForeground(new java.awt.Color(204, 204, 204));
+        lblData.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblData.setText("Data:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 5;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnLateral.add(lblData, gridBagConstraints);
+
+        lblDia.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblDia.setForeground(new java.awt.Color(204, 204, 204));
+        lblDia.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblDia.setText("14");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 5;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        pnLateral.add(lblDia, gridBagConstraints);
+
+        lblBarra1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblBarra1.setForeground(new java.awt.Color(204, 204, 204));
+        lblBarra1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblBarra1.setText("/");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 9;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        pnLateral.add(lblBarra1, gridBagConstraints);
+
+        lblMes.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblMes.setForeground(new java.awt.Color(204, 204, 204));
+        lblMes.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblMes.setText("01");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 10;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 5;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        pnLateral.add(lblMes, gridBagConstraints);
+
+        lblBarra2.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblBarra2.setForeground(new java.awt.Color(204, 204, 204));
+        lblBarra2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblBarra2.setText("/");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 11;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        pnLateral.add(lblBarra2, gridBagConstraints);
+
+        lblAno.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblAno.setForeground(new java.awt.Color(204, 204, 204));
+        lblAno.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblAno.setText("2019");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 12;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 5;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        pnLateral.add(lblAno, gridBagConstraints);
+
+        lblSeparador3.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblSeparador3.setForeground(new java.awt.Color(204, 204, 204));
+        lblSeparador3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSeparador3.setText("|");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 13;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 10;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnLateral.add(lblSeparador3, gridBagConstraints);
+
+        lblHorario.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblHorario.setForeground(new java.awt.Color(204, 204, 204));
+        lblHorario.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblHorario.setText("Hora:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 14;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnLateral.add(lblHorario, gridBagConstraints);
+
+        lblHora.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblHora.setForeground(new java.awt.Color(204, 204, 204));
+        lblHora.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblHora.setText("21");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 15;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        pnLateral.add(lblHora, gridBagConstraints);
+
+        lblDp1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblDp1.setForeground(new java.awt.Color(204, 204, 204));
+        lblDp1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblDp1.setText(":");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 16;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        pnLateral.add(lblDp1, gridBagConstraints);
+
+        lblMinuto.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblMinuto.setForeground(new java.awt.Color(204, 204, 204));
+        lblMinuto.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblMinuto.setText("20");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 17;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        pnLateral.add(lblMinuto, gridBagConstraints);
+
+        lblDp2.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblDp2.setForeground(new java.awt.Color(204, 204, 204));
+        lblDp2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblDp2.setText(":");
+        lblDp2.setMinimumSize(new java.awt.Dimension(20, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 18;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        pnLateral.add(lblDp2, gridBagConstraints);
+
+        lblSegundo.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblSegundo.setForeground(new java.awt.Color(204, 204, 204));
+        lblSegundo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSegundo.setText("22");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 19;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        pnLateral.add(lblSegundo, gridBagConstraints);
+
+        lblSeparador4.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblSeparador4.setForeground(new java.awt.Color(204, 204, 204));
+        lblSeparador4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSeparador4.setText("|");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 20;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 10;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnLateral.add(lblSeparador4, gridBagConstraints);
+
+        lblIcon.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblIcon.setForeground(new java.awt.Color(204, 204, 204));
+        lblIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/IconBase2.png"))); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 21;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 11;
+        gridBagConstraints.ipady = -2;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnLateral.add(lblIcon, gridBagConstraints);
+
+        lblStatus.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblStatus.setForeground(new java.awt.Color(204, 204, 204));
+        lblStatus.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblStatus.setText("Conectado");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 22;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 33;
+        gridBagConstraints.ipady = 8;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnLateral.add(lblStatus, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(1, 1, 1, 1);
+        pnPrincipal.add(pnLateral, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(pnPrincipal, gridBagConstraints);
+
+        jmbMenu.setBackground(new java.awt.Color(0, 51, 102));
+        jmbMenu.setForeground(new java.awt.Color(0, 51, 102));
+        jmbMenu.setToolTipText("");
+
+        jmFunc.setText("Funcionário");
+        jmFunc.setEnabled(false);
+        jmFunc.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jmFuncVil.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmFuncVil.setText("Visualizar");
+        jmFuncVil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmFuncVilActionPerformed(evt);
+            }
+        });
+        jmFunc.add(jmFuncVil);
+
+        jmFuncCad.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmFuncCad.setText("Cadastrar");
+        jmFuncCad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmFuncCadActionPerformed(evt);
+            }
+        });
+        jmFunc.add(jmFuncCad);
+
+        jmFuncAlt.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmFuncAlt.setText("Alterar");
+        jmFuncAlt.setEnabled(false);
+        jmFuncAlt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmFuncAltActionPerformed(evt);
+            }
+        });
+        jmFunc.add(jmFuncAlt);
+
+        jmbMenu.add(jmFunc);
+
+        jmEst.setText("Estoque");
+        jmEst.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jmEstVil.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmEstVil.setText("Visualizar");
+        jmEstVil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmEstVilActionPerformed(evt);
+            }
+        });
+        jmEst.add(jmEstVil);
+
+        jmEstCad.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmEstCad.setText("Cadastrar");
+        jmEstCad.setEnabled(false);
+        jmEstCad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmEstCadActionPerformed(evt);
+            }
+        });
+        jmEst.add(jmEstCad);
+
+        jmEstAlt.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmEstAlt.setText("Alterar");
+        jmEstAlt.setEnabled(false);
+        jmEstAlt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmEstAltActionPerformed(evt);
+            }
+        });
+        jmEst.add(jmEstAlt);
+
+        jmEstGasto.setText("Controle Estoque");
+        jmEstGasto.setEnabled(false);
+        jmEstGasto.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jmEstContEnt.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmEstContEnt.setText("Controle Entrada");
+        jmEstContEnt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmEstContEntActionPerformed(evt);
+            }
+        });
+        jmEstGasto.add(jmEstContEnt);
+
+        jmEstContSai.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmEstContSai.setText("Controle Saída");
+        jmEstContSai.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmEstContSaiActionPerformed(evt);
+            }
+        });
+        jmEstGasto.add(jmEstContSai);
+
+        jmEst.add(jmEstGasto);
+
+        jmbMenu.add(jmEst);
+
+        jmForn.setText("Fornecedor");
+        jmForn.setEnabled(false);
+        jmForn.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmForn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jmFornMouseClicked(evt);
+            }
+        });
+        jmForn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmFornActionPerformed(evt);
+            }
+        });
+
+        jmFornCli.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmFornCli.setText("Visualizar");
+        jmFornCli.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmFornCliActionPerformed(evt);
+            }
+        });
+        jmForn.add(jmFornCli);
+
+        jmFornCad.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmFornCad.setText("Cadastrar");
+        jmFornCad.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jmFornCadMouseClicked(evt);
+            }
+        });
+        jmFornCad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmFornCadActionPerformed(evt);
+            }
+        });
+        jmForn.add(jmFornCad);
+
+        jmFornAlt.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmFornAlt.setText("Alterar");
+        jmFornAlt.setEnabled(false);
+        jmFornAlt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmFornAltActionPerformed(evt);
+            }
+        });
+        jmForn.add(jmFornAlt);
+
+        jmbMenu.add(jmForn);
+
+        jmCli.setText("Cliente");
+        jmCli.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jmCliVil.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmCliVil.setText("Visualizar");
+        jmCliVil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmCliVilActionPerformed(evt);
+            }
+        });
+        jmCli.add(jmCliVil);
+
+        jmCliCad.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmCliCad.setText("Cadastrar");
+        jmCliCad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmCliCadActionPerformed(evt);
+            }
+        });
+        jmCli.add(jmCliCad);
+
+        jmCliAlt.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmCliAlt.setText("Alterar");
+        jmCliAlt.setEnabled(false);
+        jmCliAlt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmCliAltActionPerformed(evt);
+            }
+        });
+        jmCli.add(jmCliAlt);
+
+        jmbMenu.add(jmCli);
+
+        jmMenu.setText("Menu");
+        jmMenu.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmMenu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jmMenuMouseClicked(evt);
+            }
+        });
+        jmMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmMenuActionPerformed(evt);
+            }
+        });
+
+        jmMenuVil.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmMenuVil.setText("Visualizar");
+        jmMenuVil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmMenuVilActionPerformed(evt);
+            }
+        });
+        jmMenu.add(jmMenuVil);
+
+        jmMenuCad.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmMenuCad.setText("Cadastrar");
+        jmMenuCad.setEnabled(false);
+        jmMenuCad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmMenuCadActionPerformed(evt);
+            }
+        });
+        jmMenu.add(jmMenuCad);
+
+        jmMenuAlt.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmMenuAlt.setText("Alterar");
+        jmMenuAlt.setEnabled(false);
+        jmMenuAlt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmMenuAltActionPerformed(evt);
+            }
+        });
+        jmMenu.add(jmMenuAlt);
+
+        jmbMenu.add(jmMenu);
+
+        jmMesas.setText("Mesas");
+        jmMesas.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmMesas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jmMesasMouseClicked(evt);
+            }
+        });
+        jmMesas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmMesasActionPerformed(evt);
+            }
+        });
+
+        jmMesasVil.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmMesasVil.setText("Visualizar");
+        jmMesasVil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmMesasVilActionPerformed(evt);
+            }
+        });
+        jmMesas.add(jmMesasVil);
+
+        jmMesasCad.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmMesasCad.setText("Cadastrar");
+        jmMesasCad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmMesasCadActionPerformed(evt);
+            }
+        });
+        jmMesas.add(jmMesasCad);
+
+        jmMesasAlt.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmMesasAlt.setText("Alterar");
+        jmMesasAlt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmMesasAltActionPerformed(evt);
+            }
+        });
+        jmMesas.add(jmMesasAlt);
+
+        jmbMenu.add(jmMesas);
+
+        jmPedidos.setText("Pedido");
+        jmPedidos.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmPedidos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jmPedidosMouseClicked(evt);
+            }
+        });
+
+        jmPedidoCozinha.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmPedidoCozinha.setText("Visualizar");
+        jmPedidoCozinha.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmPedidoCozinhaActionPerformed(evt);
+            }
+        });
+        jmPedidos.add(jmPedidoCozinha);
+
+        jmPedidoGarcom.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmPedidoGarcom.setText("Cadastrar");
+        jmPedidoGarcom.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmPedidoGarcomActionPerformed(evt);
+            }
+        });
+        jmPedidos.add(jmPedidoGarcom);
+
+        jmbMenu.add(jmPedidos);
+
+        jmRel.setText("Relatorio");
+        jmRel.setEnabled(false);
+        jmRel.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jmRelAtiv.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmRelAtiv.setText("Relatório de Atividade");
+        jmRelAtiv.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmRelAtivActionPerformed(evt);
+            }
+        });
+        jmRel.add(jmRelAtiv);
+
+        jmRelEstControl.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmRelEstControl.setText("Relatório de Estoque");
+        jmRelEstControl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmRelEstControlActionPerformed(evt);
+            }
+        });
+        jmRel.add(jmRelEstControl);
+
+        jmbMenu.add(jmRel);
+
+        jmExit.setText("Sair");
+        jmExit.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jmExit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jmExitMouseClicked(evt);
+            }
+        });
+        jmExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmExitActionPerformed(evt);
+            }
+        });
+        jmbMenu.add(jmExit);
+
+        setJMenuBar(jmbMenu);
+
+        setSize(new java.awt.Dimension(1280, 714));
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jmFuncAltActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmFuncAltActionPerformed
+        Tela_Funcionario_Alt TelaAltFunc = new Tela_Funcionario_Alt();
+        dpTelas.add(TelaAltFunc);
+        TelaAltFunc.setVisible(true);
+        try {
+            TelaAltFunc.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmFuncAltActionPerformed
+
+    private void jmFuncVilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmFuncVilActionPerformed
+        Tela_Funcionario_Vil TelaVilFunc = new Tela_Funcionario_Vil();
+        dpTelas.add(TelaVilFunc);
+        TelaVilFunc.setVisible(true);
+        try {
+            TelaVilFunc.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+
+    }//GEN-LAST:event_jmFuncVilActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        Timer timer = new Timer(0, new hora_sistema());
+        timer.start();
+        DataHoraPc();
+
+    }//GEN-LAST:event_formWindowOpened
+
+    private void jmFuncCadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmFuncCadActionPerformed
+        Tela_Funcionario_Cad and = new Tela_Funcionario_Cad();
+        dpTelas.add(and);
+        and.setVisible(true);
+        try {
+            and.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmFuncCadActionPerformed
+
+    private void jmEstVilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmEstVilActionPerformed
+        Tela_Estoque_Vil and = new Tela_Estoque_Vil();
+        dpTelas.add(and);
+        and.setVisible(true);
+        try {
+            and.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmEstVilActionPerformed
+
+    private void jmEstAltActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmEstAltActionPerformed
+        Tela_Estoque_Alt TelaALtEst = new Tela_Estoque_Alt();
+        dpTelas.add(TelaALtEst);
+        TelaALtEst.setVisible(true);
+        try {
+            TelaALtEst.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmEstAltActionPerformed
+
+    private void jmEstCadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmEstCadActionPerformed
+        Tela_Estoque_Cad TelCadtEst = new Tela_Estoque_Cad();
+        dpTelas.add(TelCadtEst);
+        TelCadtEst.setVisible(true);
+        try {
+            TelCadtEst.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmEstCadActionPerformed
+
+    private void jmFornCliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmFornCliActionPerformed
+        Tela_Fornecedor_Vil TelFornVil = new Tela_Fornecedor_Vil();
+        dpTelas.add(TelFornVil);
+        TelFornVil.setVisible(true);
+        try {
+            TelFornVil.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmFornCliActionPerformed
+
+    private void jmFornActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmFornActionPerformed
+
+    }//GEN-LAST:event_jmFornActionPerformed
+
+    private void jmFornCadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmFornCadActionPerformed
+        Tela_Fornecedor_Cad TelFornCad = new Tela_Fornecedor_Cad();
+        dpTelas.add(TelFornCad);
+        TelFornCad.setVisible(true);
+        try {
+            TelFornCad.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmFornCadActionPerformed
+
+    private void jmFornAltActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmFornAltActionPerformed
+        Tela_Fornecedor_Alt TelFornAlt = new Tela_Fornecedor_Alt();
+        dpTelas.add(TelFornAlt);
+        TelFornAlt.setVisible(true);
+        try {
+            TelFornAlt.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmFornAltActionPerformed
+
+    private void jmMesasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmMesasActionPerformed
+   
+    }//GEN-LAST:event_jmMesasActionPerformed
+
+    private void jmExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmExitActionPerformed
+
+    }//GEN-LAST:event_jmExitActionPerformed
+
+    private void jmExitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jmExitMouseClicked
+        CadastroDeAcesso();
+        new Tela_Login().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jmExitMouseClicked
+
+    private void jmMesasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jmMesasMouseClicked
+        //  new TelaAddMesa().setVisible(true);
+    }//GEN-LAST:event_jmMesasMouseClicked
+
+    private void jmPedidosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jmPedidosMouseClicked
+
+    }//GEN-LAST:event_jmPedidosMouseClicked
+
+    private void jmMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jmMenuMouseClicked
+
+    }//GEN-LAST:event_jmMenuMouseClicked
+
+    private void jmRelEstControlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmRelEstControlActionPerformed
+       
+
+    }//GEN-LAST:event_jmRelEstControlActionPerformed
+
+    private void jmEstContEntActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmEstContEntActionPerformed
+       
+
+    }//GEN-LAST:event_jmEstContEntActionPerformed
+
+    private void jmRelAtivActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmRelAtivActionPerformed
+       
+    }//GEN-LAST:event_jmRelAtivActionPerformed
+
+    private void jmCliVilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmCliVilActionPerformed
+        Tela_Cliente_Vil and = new Tela_Cliente_Vil();
+        dpTelas.add(and);
+        and.setVisible(true);
+        try {
+            and.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmCliVilActionPerformed
+
+    private void jmCliCadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmCliCadActionPerformed
+        Tela_Cliente_Cad TelCliCad = new Tela_Cliente_Cad();
+        dpTelas.add(TelCliCad);
+        TelCliCad.setVisible(true);
+        try {
+            TelCliCad.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmCliCadActionPerformed
+
+    private void jmCliAltActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmCliAltActionPerformed
+        Tela_Cliente_Alt and = new Tela_Cliente_Alt();
+        dpTelas.add(and);
+        and.setVisible(true);
+        try {
+            and.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmCliAltActionPerformed
+
+    private void jmFornMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jmFornMouseClicked
+
+    }//GEN-LAST:event_jmFornMouseClicked
+
+    private void jmFornCadMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jmFornCadMouseClicked
+
+    }//GEN-LAST:event_jmFornCadMouseClicked
+
+    private void jmMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmMenuActionPerformed
+
+    }//GEN-LAST:event_jmMenuActionPerformed
+
+    private void jmMenuVilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmMenuVilActionPerformed
+        Tela_Menu_Vil and = new Tela_Menu_Vil();
+        dpTelas.add(and);
+        and.setVisible(true);
+        try {
+            and.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmMenuVilActionPerformed
+
+    private void jmMenuCadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmMenuCadActionPerformed
+        Tela_Menu_Cad and = new Tela_Menu_Cad();
+        dpTelas.add(and);
+        and.setVisible(true);
+        try {
+            and.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmMenuCadActionPerformed
+
+    private void jmMenuAltActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmMenuAltActionPerformed
+        Tela_Menu_Alterar and = new Tela_Menu_Alterar();
+        dpTelas.add(and);
+        and.setVisible(true);
+        try {
+            and.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_jmMenuAltActionPerformed
+
+    private void jmMesasVilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmMesasVilActionPerformed
+        Tela_Mesa_Vil and = new Tela_Mesa_Vil();
+        dpTelas.add(and);
+        and.setVisible(true);
+        try {
+            and.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_jmMesasVilActionPerformed
+
+    private void jmMesasCadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmMesasCadActionPerformed
+        // TODO add your handling code here:
+        Tela_Mesa_Cad and = new Tela_Mesa_Cad();
+        dpTelas.add(and);
+        and.setVisible(true);
+        try {
+            and.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmMesasCadActionPerformed
+
+    private void jmMesasAltActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmMesasAltActionPerformed
+        // TODO add your handling code here:
+        Tela_Mesa_Alt and = new Tela_Mesa_Alt();
+        dpTelas.add(and);
+        and.setVisible(true);
+        try {
+            and.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+        }
+    }//GEN-LAST:event_jmMesasAltActionPerformed
+
+    private void jmPedidoCozinhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmPedidoCozinhaActionPerformed
+       
+    }//GEN-LAST:event_jmPedidoCozinhaActionPerformed
+
+    private void jmPedidoGarcomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmPedidoGarcomActionPerformed
+        
+    }//GEN-LAST:event_jmPedidoGarcomActionPerformed
+
+    private void jmEstContSaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmEstContSaiActionPerformed
+       
+    }//GEN-LAST:event_jmEstContSaiActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Tela_Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Tela_Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Tela_Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Tela_Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Tela_Principal().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    public static javax.swing.JDesktopPane dpTelas;
+    private javax.swing.JMenu jmCli;
+    public static javax.swing.JMenuItem jmCliAlt;
+    private javax.swing.JMenuItem jmCliCad;
+    private javax.swing.JMenuItem jmCliVil;
+    public static javax.swing.JMenu jmEst;
+    public static javax.swing.JMenuItem jmEstAlt;
+    public static javax.swing.JMenuItem jmEstCad;
+    public static javax.swing.JMenuItem jmEstContEnt;
+    public static javax.swing.JMenuItem jmEstContSai;
+    public static javax.swing.JMenu jmEstGasto;
+    private javax.swing.JMenuItem jmEstVil;
+    private javax.swing.JMenu jmExit;
+    public static javax.swing.JMenu jmForn;
+    public static javax.swing.JMenuItem jmFornAlt;
+    public static javax.swing.JMenuItem jmFornCad;
+    public static javax.swing.JMenuItem jmFornCli;
+    public static javax.swing.JMenu jmFunc;
+    public static javax.swing.JMenuItem jmFuncAlt;
+    public static javax.swing.JMenuItem jmFuncCad;
+    public static javax.swing.JMenuItem jmFuncVil;
+    private javax.swing.JMenu jmMenu;
+    public static javax.swing.JMenuItem jmMenuAlt;
+    public static javax.swing.JMenuItem jmMenuCad;
+    private javax.swing.JMenuItem jmMenuVil;
+    private javax.swing.JMenu jmMesas;
+    private javax.swing.JMenuItem jmMesasAlt;
+    private javax.swing.JMenuItem jmMesasCad;
+    private javax.swing.JMenuItem jmMesasVil;
+    public static javax.swing.JMenuItem jmPedidoCozinha;
+    public static javax.swing.JMenuItem jmPedidoGarcom;
+    public static javax.swing.JMenu jmPedidos;
+    public static javax.swing.JMenu jmRel;
+    private javax.swing.JMenuItem jmRelAtiv;
+    private javax.swing.JMenuItem jmRelEstControl;
+    private javax.swing.JMenuBar jmbMenu;
+    public static javax.swing.JLabel lblAno;
+    private javax.swing.JLabel lblBarra1;
+    private javax.swing.JLabel lblBarra2;
+    public static javax.swing.JLabel lblCargo;
+    public static javax.swing.JLabel lblData;
+    public static javax.swing.JLabel lblDia;
+    private javax.swing.JLabel lblDp1;
+    private javax.swing.JLabel lblDp2;
+    public static javax.swing.JLabel lblHora;
+    public static javax.swing.JLabel lblHorario;
+    private javax.swing.JLabel lblIcon;
+    public static javax.swing.JLabel lblLogado;
+    public static javax.swing.JLabel lblLogin;
+    public static javax.swing.JLabel lblMes;
+    public static javax.swing.JLabel lblMinuto;
+    public static javax.swing.JLabel lblSegundo;
+    public static javax.swing.JLabel lblSeparador;
+    public static javax.swing.JLabel lblSeparador1;
+    public static javax.swing.JLabel lblSeparador2;
+    public static javax.swing.JLabel lblSeparador3;
+    public static javax.swing.JLabel lblSeparador4;
+    public static javax.swing.JLabel lblSetor;
+    private javax.swing.JLabel lblStatus;
+    private javax.swing.JPanel pnLateral;
+    private javax.swing.JPanel pnPrincipal;
+    // End of variables declaration//GEN-END:variables
+
+    class hora_sistema implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Calendar now = Calendar.getInstance();
+            lblHora.setText(String.format("%1$tH", now));
+
+            lblMinuto.setText(String.format("%1$tM", now));
+
+            lblSegundo.setText(String.format("%1$tS", now));
+
+//            consultar();
+        }
+
+    }
+
+}

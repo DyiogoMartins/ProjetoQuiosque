@@ -1,0 +1,510 @@
+package Telas.Estoque;
+
+import java.sql.*;
+// chama o arquivo de conexao com o banco de dados
+import Connection.ConnectionClass;
+import net.proteanit.sql.DbUtils;
+import java.awt.Component;
+import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+
+/**
+ *
+ * @author DIOGO
+ */
+public class Tela_Estoque_Vil extends javax.swing.JInternalFrame {
+
+    Connection conexao = null;
+    PreparedStatement pst = null;
+    ResultSet rs = null;
+
+    /**
+     * Creates new form teste
+     */
+    public Tela_Estoque_Vil() {
+        initComponents();
+        conexao = ConnectionClass.conector();
+        consultarProduto();
+        procedAjustaTable();
+
+    }
+
+    private void consultarProduto() {
+
+        String sql = "SELECT tb_estoque.idEstoq as 'ID Produto',"
+                + " tb_estoque.Produto,"
+                + " tb_estoque.categoria as 'Categoria',"
+                + " tb_estoque.Qnt as 'Quantidade',"
+                + " tb_estoque.obs as 'Observação',"
+                + " DATE_FORMAT(Data_Hora, '%d/%m/%Y %H:%i:%s') AS 'Data Hora'"
+                + " FROM tb_estoque"
+                + " WHERE tb_estoque.Produto like ?";
+
+        //tb_estoque.Qnt as 'Quantidade',
+        try {
+
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, txtPesquisar.getText() + "%");
+            rs = pst.executeQuery();
+
+            tblProd.setModel(DbUtils.resultSetToTableModel(rs));
+            //tblPro.getTableHeader().setReorderingAllowed(false);
+            procedAjustaTable();
+
+        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+
+    private void setarCampos() {
+
+        int setar = tblProd.getSelectedRow();
+
+        txt_IdProd.setText(tblProd.getModel().getValueAt(setar, 0).toString());
+        AtxtProd.setText(tblProd.getModel().getValueAt(setar, 1).toString());
+        cboCategoria.setText(tblProd.getModel().getValueAt(setar, 2).toString());
+        jspQnt.setText(tblProd.getModel().getValueAt(setar, 3).toString());
+        AtxtObs.setText(tblProd.getModel().getValueAt(setar, 4).toString());
+    }
+
+    private void limpar() {
+        txt_IdProd.setText("...");
+        jspQnt.setText("...");
+        AtxtProd.setText("...");
+        AtxtObs.setText("...");
+        cboCategoria.setText("...");
+
+    }
+
+    private void procedAjustaTable() {
+
+        //tblForn.setGridColor(Color.RGBtoHSB(ERROR, WIDTH, ABORT, "0F0F0F"));
+        tblProd.setShowGrid(true);
+        tblProd.setRowHeight(30);
+
+        //Define o modo de redimensionamento automático da tabela como 
+        //"AUTO_RESIZE_OFF", que desabilita o redimensionamento automático da
+        //largura das colunas.
+        tblProd.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        for (int column = 0; column < tblProd.getColumnCount(); column++) {
+            TableColumn ColunaTable = tblProd.getColumnModel().getColumn(column);
+            // largura preferida da coluna(mínima)
+            int miniWidth = ColunaTable.getMinWidth();
+            // largura máxima da coluna.
+            int maxWidth = ColunaTable.getMaxWidth();
+
+            // Percorre cada linha da tabela para obter o conteúdo da célula.
+            for (int linhas = 0; linhas < tblProd.getRowCount(); linhas++) {
+                // Obtém o renderizador(o valor ) de célula para a célula especificada.
+                TableCellRenderer renderizadorCelula = tblProd.getCellRenderer(linhas, column);
+                // Prepara o renderizador para desenhar na célula especificada.
+                Component c = tblProd.prepareRenderer(renderizadorCelula, linhas, column);
+                // Obtém a largura preferida do componente que representa a célula.
+                int width = c.getPreferredSize().width + tblProd.getIntercellSpacing().width;
+                // Calcula a largura total da célula, que é a largura preferida (minima)
+                //  + o espaçamento entre as células.
+                miniWidth = Math.max(miniWidth, width);
+
+                // Se a largura preferida(minima) da coluna for maior ou igual à largura 
+                // máxima da coluna, define a largura preferida(minima) da coluna 
+                // como a largura máxima da coluna.
+                if (miniWidth >= maxWidth) {
+                    miniWidth = maxWidth;
+                    break;
+                }
+            }
+
+            // Define a largura preferida(minima) da coluna como a largura da coluna atual.
+            ColunaTable.setPreferredWidth(miniWidth + (20 * tblProd.getColumnName(column).length()));
+            //ColunaTable.setPreferredWidth(preferredWidth + ColunaTable.getWidth());
+        }
+
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        pnPrincipal = new javax.swing.JPanel();
+        pnCima = new javax.swing.JPanel();
+        lblPesquisa = new javax.swing.JLabel();
+        txtPesquisar = new javax.swing.JTextField();
+        btnLimpar = new javax.swing.JButton();
+        pnMeio = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblProd = new javax.swing.JTable();
+        pnBaixo = new javax.swing.JPanel();
+        lbl_IdProd = new javax.swing.JLabel();
+        lblQnt = new javax.swing.JLabel();
+        lblProd = new javax.swing.JLabel();
+        txt_IdProd = new javax.swing.JLabel();
+        AtxtProd = new javax.swing.JLabel();
+        jspQnt = new javax.swing.JLabel();
+        lblCateg = new javax.swing.JLabel();
+        cboCategoria = new javax.swing.JLabel();
+        lblObs = new javax.swing.JLabel();
+        AtxtObs = new javax.swing.JLabel();
+
+        setBackground(new java.awt.Color(0, 0, 0));
+        setBorder(null);
+        setClosable(true);
+        setResizable(true);
+        setTitle("Tela Visualizar Fornecedor");
+        setMinimumSize(new java.awt.Dimension(800, 600));
+        setPreferredSize(new java.awt.Dimension(800, 600));
+        getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        pnPrincipal.setBackground(new java.awt.Color(153, 153, 153));
+        pnPrincipal.setMinimumSize(new java.awt.Dimension(800, 600));
+        pnPrincipal.setPreferredSize(new java.awt.Dimension(800, 600));
+        pnPrincipal.setLayout(new java.awt.GridBagLayout());
+
+        pnCima.setBackground(new java.awt.Color(51, 51, 51));
+        pnCima.setMinimumSize(new java.awt.Dimension(50, 50));
+        pnCima.setPreferredSize(new java.awt.Dimension(50, 50));
+        pnCima.setLayout(new java.awt.GridBagLayout());
+
+        lblPesquisa.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblPesquisa.setForeground(new java.awt.Color(204, 204, 204));
+        lblPesquisa.setText("Pesquisar:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnCima.add(lblPesquisa, gridBagConstraints);
+
+        txtPesquisar.setBackground(new java.awt.Color(204, 204, 204));
+        txtPesquisar.setFont(new java.awt.Font("Arial", 0, 17)); // NOI18N
+        txtPesquisar.setMinimumSize(new java.awt.Dimension(45, 45));
+        txtPesquisar.setPreferredSize(new java.awt.Dimension(45, 45));
+        txtPesquisar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPesquisarKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPesquisarKeyTyped(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnCima.add(txtPesquisar, gridBagConstraints);
+
+        btnLimpar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        btnLimpar.setText("Limpar");
+        btnLimpar.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        btnLimpar.setMaximumSize(new java.awt.Dimension(45, 45));
+        btnLimpar.setMinimumSize(new java.awt.Dimension(45, 45));
+        btnLimpar.setPreferredSize(new java.awt.Dimension(45, 45));
+        btnLimpar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimparActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnCima.add(btnLimpar, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.1;
+        pnPrincipal.add(pnCima, gridBagConstraints);
+
+        pnMeio.setBackground(new java.awt.Color(102, 102, 102));
+        pnMeio.setMinimumSize(new java.awt.Dimension(50, 50));
+        pnMeio.setPreferredSize(new java.awt.Dimension(50, 50));
+        pnMeio.setLayout(new java.awt.GridBagLayout());
+
+        tblProd.setBackground(new java.awt.Color(102, 102, 102));
+        tblProd.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        tblProd.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        tblProd.setGridColor(new java.awt.Color(15, 15, 15));
+        tblProd.setRequestFocusEnabled(false);
+        tblProd.setSelectionBackground(new java.awt.Color(0, 51, 204));
+        tblProd.setSurrendersFocusOnKeystroke(true);
+        tblProd.getTableHeader().setReorderingAllowed(false);
+        tblProd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblProdMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tblProdMousePressed(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblProd);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnMeio.add(jScrollPane1, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipady = 150;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.5;
+        pnPrincipal.add(pnMeio, gridBagConstraints);
+
+        pnBaixo.setBackground(new java.awt.Color(51, 51, 51));
+        pnBaixo.setForeground(new java.awt.Color(0, 0, 0));
+        pnBaixo.setMinimumSize(new java.awt.Dimension(50, 50));
+        pnBaixo.setPreferredSize(new java.awt.Dimension(50, 50));
+        pnBaixo.setLayout(new java.awt.GridBagLayout());
+
+        lbl_IdProd.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lbl_IdProd.setForeground(new java.awt.Color(204, 204, 204));
+        lbl_IdProd.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        lbl_IdProd.setText("ID Produto:");
+        lbl_IdProd.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnBaixo.add(lbl_IdProd, gridBagConstraints);
+
+        lblQnt.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblQnt.setForeground(new java.awt.Color(204, 204, 204));
+        lblQnt.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        lblQnt.setText("Quantidade:");
+        lblQnt.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnBaixo.add(lblQnt, gridBagConstraints);
+
+        lblProd.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblProd.setForeground(new java.awt.Color(204, 204, 204));
+        lblProd.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        lblProd.setText("Produto:");
+        lblProd.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnBaixo.add(lblProd, gridBagConstraints);
+
+        txt_IdProd.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        txt_IdProd.setForeground(new java.awt.Color(204, 204, 204));
+        txt_IdProd.setText("...");
+        txt_IdProd.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        txt_IdProd.setMinimumSize(new java.awt.Dimension(45, 45));
+        txt_IdProd.setPreferredSize(new java.awt.Dimension(45, 45));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnBaixo.add(txt_IdProd, gridBagConstraints);
+
+        AtxtProd.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        AtxtProd.setForeground(new java.awt.Color(204, 204, 204));
+        AtxtProd.setText("...");
+        AtxtProd.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        AtxtProd.setMinimumSize(new java.awt.Dimension(45, 45));
+        AtxtProd.setPreferredSize(new java.awt.Dimension(45, 45));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnBaixo.add(AtxtProd, gridBagConstraints);
+
+        jspQnt.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        jspQnt.setForeground(new java.awt.Color(204, 204, 204));
+        jspQnt.setText("...");
+        jspQnt.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        jspQnt.setMinimumSize(new java.awt.Dimension(45, 45));
+        jspQnt.setPreferredSize(new java.awt.Dimension(45, 45));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnBaixo.add(jspQnt, gridBagConstraints);
+
+        lblCateg.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblCateg.setForeground(new java.awt.Color(204, 204, 204));
+        lblCateg.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        lblCateg.setText("Categoria:");
+        lblCateg.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnBaixo.add(lblCateg, gridBagConstraints);
+
+        cboCategoria.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        cboCategoria.setForeground(new java.awt.Color(204, 204, 204));
+        cboCategoria.setText("...");
+        cboCategoria.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        cboCategoria.setMinimumSize(new java.awt.Dimension(45, 45));
+        cboCategoria.setPreferredSize(new java.awt.Dimension(45, 45));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnBaixo.add(cboCategoria, gridBagConstraints);
+
+        lblObs.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblObs.setForeground(new java.awt.Color(204, 204, 204));
+        lblObs.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        lblObs.setText("Obs:");
+        lblObs.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnBaixo.add(lblObs, gridBagConstraints);
+
+        AtxtObs.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        AtxtObs.setForeground(new java.awt.Color(204, 204, 204));
+        AtxtObs.setText("...");
+        AtxtObs.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        AtxtObs.setMinimumSize(new java.awt.Dimension(45, 45));
+        AtxtObs.setPreferredSize(new java.awt.Dimension(45, 45));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnBaixo.add(AtxtObs, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        pnPrincipal.add(pnBaixo, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(pnPrincipal, gridBagConstraints);
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
+        limpar();
+    }//GEN-LAST:event_btnLimparActionPerformed
+
+    private void tblProdMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProdMousePressed
+        tblProd.editingCanceled(null);
+        tblProd.editingStopped(null);
+    }//GEN-LAST:event_tblProdMousePressed
+
+    private void txtPesquisarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisarKeyReleased
+        String numeros = "0987654321";
+        if (numeros.contains(evt.getKeyChar() + "")) {
+            evt.consume();
+        }
+        consultarProduto();
+    }//GEN-LAST:event_txtPesquisarKeyReleased
+
+    private void txtPesquisarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisarKeyTyped
+        String numeros = "0987654321";
+        if (numeros.contains(evt.getKeyChar() + "")) {
+            evt.consume();
+        }
+        consultarProduto();
+    }//GEN-LAST:event_txtPesquisarKeyTyped
+
+    private void tblProdMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProdMouseClicked
+        setarCampos();
+    }//GEN-LAST:event_tblProdMouseClicked
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel AtxtObs;
+    private javax.swing.JLabel AtxtProd;
+    private javax.swing.JButton btnLimpar;
+    private javax.swing.JLabel cboCategoria;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel jspQnt;
+    private javax.swing.JLabel lblCateg;
+    private javax.swing.JLabel lblObs;
+    private javax.swing.JLabel lblPesquisa;
+    private javax.swing.JLabel lblProd;
+    private javax.swing.JLabel lblQnt;
+    private javax.swing.JLabel lbl_IdProd;
+    private javax.swing.JPanel pnBaixo;
+    private javax.swing.JPanel pnCima;
+    private javax.swing.JPanel pnMeio;
+    private javax.swing.JPanel pnPrincipal;
+    private javax.swing.JTable tblProd;
+    private javax.swing.JTextField txtPesquisar;
+    private javax.swing.JLabel txt_IdProd;
+    // End of variables declaration//GEN-END:variables
+}
